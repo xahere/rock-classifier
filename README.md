@@ -9,9 +9,6 @@
 
 Powered by a fine-tuned **MobileNetV2** architecture, it brings the power of Transfer Learning to standard laptop CPUs, making it an ideal tool for geology students and field researchers working in remote environments.
 
-![Lithos AI Homepage](https://github.com/xahere/rock-classifier/blob/main/lithos_ai_homepage_1768416817355.png?raw=true)
-*(Note: Replace the above link with your actual screenshot path if hosted differently)*
-
 ---
 
 ## 🚀 Key Features
