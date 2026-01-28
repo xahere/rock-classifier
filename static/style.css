@@ -13,7 +13,12 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    padding: 0;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.hidden {
+    display: none !important;
 }
 
 body {
@@ -55,8 +60,15 @@ body {
 }
 
 @keyframes float {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(30px, 50px); }
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(30px, 50px);
+    }
 }
 
 .container {
@@ -112,10 +124,11 @@ header p {
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: rgba(255,255,255,0.02);
+    background: rgba(255, 255, 255, 0.02);
 }
 
-.upload-area:hover, .upload-area.dragover {
+.upload-area:hover,
+.upload-area.dragover {
     border-color: var(--primary);
     background: rgba(99, 102, 241, 0.1);
 }
@@ -158,7 +171,7 @@ header p {
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     color: white;
     border: none;
     border-radius: 50%;
@@ -173,7 +186,7 @@ header p {
 }
 
 #remove-btn:hover {
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
 }
 
 /* Button */
@@ -208,7 +221,7 @@ header p {
 .loader {
     width: 20px;
     height: 20px;
-    border: 3px solid rgba(255,255,255,0.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top-color: white;
     animation: spin 1s linear infinite;
@@ -219,7 +232,9 @@ header p {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Result Card */

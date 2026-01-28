@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lithos AI - Rock Identifier</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
     <div class="background-orb orb-1"></div>
     <div class="background-orb orb-2"></div>
@@ -20,7 +22,12 @@
             <div class="upload-area" id="drop-zone">
                 <input type="file" id="file-input" accept="image/*" hidden>
                 <div class="icon-container">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
                 </div>
                 <h3>Upload Rock Image</h3>
                 <p>Drag & drop or click to browse</p>
@@ -49,9 +56,38 @@
                     <span class="value" id="result-confidence">--</span>
                 </div>
             </div>
+
+            <!-- Adaptive Feedback Section (Yes/No Flow) -->
+            <div class="feedback-section">
+                <p class="feedback-title" id="feedback-q">Is this result correct?</p>
+
+                <!-- Step 1: Yes/No -->
+                <div id="feedback-step-1" class="feedback-controls">
+                    <button id="feedback-yes-btn" class="btn-secondary">Yes</button>
+                    <button id="feedback-no-btn" class="btn-secondary">No</button>
+                </div>
+
+                <!-- Step 2: Select Correct Type -->
+                <div id="feedback-step-2" class="feedback-controls hidden">
+                    <select id="correct-label-select">
+                        <option value="" disabled selected>Select Correct Type</option>
+                        <option value="Igneous">Igneous</option>
+                        <option value="Metamorphic">Metamorphic</option>
+                        <option value="Sedimentary">Sedimentary</option>
+                    </select>
+                    <button id="feedback-submit-btn" class="btn-primary">Learn Pattern</button>
+                </div>
+            </div>
+
+            <div id="feedback-success" class="hidden">
+                <p class="feedback-msg">Thanks! I'm analyzing the pattern and updating my model in the background.</p>
+            </div>
+
         </div>
+
     </main>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
+
 </html>

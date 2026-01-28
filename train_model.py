@@ -4,7 +4,7 @@ from pathlib import Path
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 from sklearn.utils import class_weight
@@ -15,11 +15,12 @@ IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS_HEAD = 5
 EPOCHS_FINE = 10
+EPOCHS_LITE = 5 # For quick retraining
 LEARNING_RATE_HEAD = 1e-4
 LEARNING_RATE_FINE = 1e-5
+LEARNING_RATE_LITE = 1e-6 # Very slow learning rate for stability
 
 def create_model(num_classes):
-
     base_model = MobileNetV2(input_shape=IMG_SIZE + (3,), include_top=False, weights='imagenet')
     base_model.trainable = False
     
@@ -32,14 +33,10 @@ def create_model(num_classes):
     
     return Model(inputs=base_model.input, outputs=outputs), base_model
 
-def train():
+def get_generators():
     if not DATA_DIR.exists():
-        print(f"Error: Dataset directory '{DATA_DIR}' not found.")
-        return
+        raise FileNotFoundError(f"Dataset directory '{DATA_DIR}' not found.")
 
-    print(f"Initializing training with data from {DATA_DIR}...")
-
-    # Data Augmentation configuration
     train_datagen = ImageDataGenerator(
         rescale=1./255,
         rotation_range=30,
@@ -53,7 +50,7 @@ def train():
         fill_mode='nearest',
         validation_split=0.2
     )
-    
+
     train_generator = train_datagen.flow_from_directory(
         DATA_DIR,
         target_size=IMG_SIZE,
@@ -70,11 +67,15 @@ def train():
         subset='validation'
     )
     
-    num_classes = len(train_generator.class_indices)
-    print(f"Classes detected: {train_generator.class_indices}")
+    return train_generator, validation_generator
 
-    # Compute balanced class weights to handle dataset imbalance
-    print("Computing class weights...")
+def train_full():
+    print(f"Initializing full training from {DATA_DIR}...")
+    
+    train_generator, validation_generator = get_generators()
+    num_classes = len(train_generator.class_indices)
+    
+    # Compute balanced class weights
     train_classes = train_generator.classes
     class_weights = class_weight.compute_class_weight(
         class_weight='balanced',
@@ -82,7 +83,6 @@ def train():
         y=train_classes
     )
     class_weights_dict = dict(enumerate(class_weights))
-    print(f"Weights: {class_weights_dict}")
     
     model, base_model = create_model(num_classes)
     
@@ -104,8 +104,6 @@ def train():
     # --- Phase 2: Fine-Tuning ---
     print("\nStarting Phase 2: Fine-Tuning Base Model...")
     base_model.trainable = True
-    
-    # Fine-tune from layer 100
     for layer in base_model.layers[:100]:
         layer.trainable = False
         
@@ -129,14 +127,50 @@ def train():
         callbacks=callbacks
     )
     
-    print("\nSaving final model artifacts...")
+    save_artifacts(model, train_generator.class_indices)
+
+
+def retrain_lite():
+    """
+    Lightweight retraining function for the adaptive feedback loop.
+    Loads existing model, trains for few epochs with low LR.
+    """
+    if not os.path.exists("rock_classifier.h5"):
+        print("No existing model found for retraining. Running full training.")
+        return train_full()
+        
+    print("Starting Lite Retraining (Adaptive Feedback)...")
+    
+    # Load generators (will include new feedback images now in the folders)
+    train_generator, validation_generator = get_generators()
+    
+    # Load existing model
+    model = load_model("rock_classifier.h5")
+    
+    # Re-compile with very low learning rate for stability
+    model.compile(optimizer=Adam(learning_rate=LEARNING_RATE_LITE),
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+    
+    # Train for short duration
+    model.fit(
+        train_generator,
+        steps_per_epoch=train_generator.samples // BATCH_SIZE,
+        validation_data=validation_generator,
+        validation_steps=validation_generator.samples // BATCH_SIZE,
+        epochs=EPOCHS_LITE
+    )
+    
+    save_artifacts(model, train_generator.class_indices)
+
+def save_artifacts(model, class_indices):
+    print("\nSaving model artifacts...")
     model.save("rock_classifier.h5")
     
     with open("class_indices.txt", "w") as f:
-        for k, v in train_generator.class_indices.items():
+        for k, v in class_indices.items():
             f.write(f"{v}:{k}\n")
-            
-    print("Training pipeline completed successfully.")
+    print("Process completed successfully.")
 
 if __name__ == "__main__":
-    train()
+    train_full()
