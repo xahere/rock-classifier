@@ -1,0 +1,12 @@
+__pycache__/
+.venv/
+venv/
+dataset_raw/
+dataset_raw_arnab/
+dataset_raw_rockvision/
+dataset_organized/
+uploads/
+*.h5
+*.keras
+*.pyc
+.DS_Store

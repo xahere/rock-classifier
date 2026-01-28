@@ -1,0 +1,3 @@
+0:Igneous
+1:Metamorphic
+2:Sedimentary

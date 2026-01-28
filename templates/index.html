@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lithos AI - Rock Identifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="background-orb orb-1"></div>
+    <div class="background-orb orb-2"></div>
+
+    <main class="container">
+        <header>
+            <h1>Lithos AI</h1>
+            <p>Advanced Offline Rock Classification System</p>
+        </header>
+
+        <div class="card glass-panel">
+            <div class="upload-area" id="drop-zone">
+                <input type="file" id="file-input" accept="image/*" hidden>
+                <div class="icon-container">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <h3>Upload Rock Image</h3>
+                <p>Drag & drop or click to browse</p>
+            </div>
+
+            <div class="preview-container hidden" id="preview-container">
+                <img id="image-preview" src="" alt="Rock Preview">
+                <button id="remove-btn" class="icon-btn">&times;</button>
+            </div>
+
+            <button id="analyze-btn" class="btn-primary" disabled>
+                <span>Analyze Rock</span>
+                <div class="loader hidden"></div>
+            </button>
+        </div>
+
+        <div id="result-card" class="card result-card hidden">
+            <h2>Analysis Result</h2>
+            <div class="result-content">
+                <div class="result-item">
+                    <span class="label">Type</span>
+                    <span class="value" id="result-type">--</span>
+                </div>
+                <div class="result-item">
+                    <span class="label">Confidence</span>
+                    <span class="value" id="result-confidence">--</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
