@@ -15,7 +15,7 @@ The project features a Flask-based backend powered by Tensorflow/Keras (MobileNe
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/xahere/lithos-ai.git
+   git clone https://github.com/xahere/rock-classifier.git
    cd lithos-ai
    ```
 
